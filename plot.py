@@ -6,11 +6,31 @@ import matplotlib.pyplot as plt
 def pace(point):
     """
     Calculate pace (min/km) from speed (m/s)
-    :param point: dictionary representing endomondo point
+    :param point: dictionary representing Endomondo point
     :return: pace value (float)
     """
     speed = point.get("speed", 0.0)
     return 60.0 / speed if speed > 0.0 else None
+
+
+def bubble_sort(l, key=lambda e: e):
+    """
+    Bubble sort algorithm (in-place) - used for mostly sorted data
+    :param l: mutable input list
+    :param key: sorting key
+    :return sorted input list
+    """
+    changed = True
+    size = len(l) - 1
+    while size > 0 and changed:
+        changed = False
+        for i in range(size):
+            if key(l[i]) > key(l[i + 1]):
+                changed = True
+                l[i], l[i + 1] = l[i + 1], l[i]
+        size -= 1
+
+    return l
 
 
 # TODO think about boxplot
@@ -26,8 +46,7 @@ def average_pace_approximation_curve(workouts, aggregation_step=None):
 
     group_key = lambda p: int(p[0] * aggregation_step)
     flat_data = itertools.chain.from_iterable(map(distance_pace_pair, workouts))
-    # TODO use bubble sort - it almost sorted now!
-    sorted_data = sorted(filter(lambda e: e[1] is not None, flat_data), key=group_key)
+    sorted_data = bubble_sort(list(filter(lambda e: e[1] is not None, flat_data)), key=group_key)
     grouped_data = itertools.groupby(sorted_data, key=group_key)
 
     x, y = [], []
@@ -89,7 +108,7 @@ def plot_average(workouts, aggregation_step=None):
     handles.append(handle)
 
     x, y = average_pace_approximation_curve(workouts, aggregation_step)
-    handle, = plt.plot(x, y, lw=2, label="aproximal")
+    handle, = plt.plot(x, y, lw=2, label="average curve")
     handles.append(handle)
 
     return handles
