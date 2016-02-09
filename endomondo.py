@@ -29,8 +29,8 @@ class EndomondoUser:
         self.workouts_map = {}
 
     def workouts(self, before=datetime.datetime.utcnow(),
-                     after=datetime.datetime.utcnow() - datetime.timedelta(3 * 365 / 12)):
-        return map(self.get_workout, self.get_workouts_ids(before, after))
+                 after=datetime.datetime.utcnow() - datetime.timedelta(3 * 365 / 12)):
+        return list(map(self.get_workout, self.get_workouts_ids(before, after)))
 
     def get_workout(self, workout_id):
         if workout_id not in self.workouts_map:
