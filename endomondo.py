@@ -30,7 +30,7 @@ class EndomondoUser:
 
     def workouts(self, before=datetime.datetime.utcnow(),
                  after=datetime.datetime.utcnow() - datetime.timedelta(3 * 365 / 12)):
-        return list(map(self.get_workout, self.get_workouts_ids(before, after)))
+        return map(self.get_workout, self.get_workouts_ids(before, after))
 
     def get_workout(self, workout_id):
         if workout_id not in self.workouts_map:
@@ -44,3 +44,14 @@ class EndomondoUser:
             EndomondoUser.workouts_list_url.format(self.id, before.isoformat('T'), after.isoformat('T')))
 
         return map(lambda w: w["id"], workouts)
+
+
+def workout_registered_by_mobile_app(workout):
+    """
+    Check if workout was registered by endomonodo mobile app.
+    If you added workout by without using mobile app then some fields are missing.
+    :param workout:
+    :return: true when registered by mobile app
+    """
+    points = workout["points"]["points"]
+    return len(points) > 0 and "distance" in points[0]
